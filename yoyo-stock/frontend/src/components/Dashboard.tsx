@@ -92,11 +92,23 @@ const Dashboard: React.FC = () => {
     setShowDetails(true);
   };
 
+  const parseMarketCap = (mcap: string) => {
+    const value = parseFloat(mcap);
+    if (mcap.endsWith('T')) {
+      return value * 1000;
+    } else if (mcap.endsWith('B')) {
+      return value;
+    } else if (mcap.endsWith('M')) {
+      return value / 1000;
+    }
+    return value;
+  };
+
   const sortedStocks = [...stocks].sort((a, b) => {
     let comparison = 0;
     switch (sortBy) {
       case 'mcap':
-        comparison = parseFloat(a.mcap) - parseFloat(b.mcap);
+        comparison = parseMarketCap(a.mcap) - parseMarketCap(b.mcap);
         break;
       case 'change':
         comparison = a.change - b.change;
