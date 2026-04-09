@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Home, TrendingUp, History, Shield, Settings, Menu, Bell } from 'lucide-react';
 import Notification from './Notification';
 
 const Navbar: React.FC = () => {
@@ -6,11 +7,11 @@ const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const tabs = [
-    { id: 'home', label: '首页', icon: '🏠' },
-    { id: 'selection', label: '选股', icon: '📈' },
-    { id: 'history', label: '历史', icon: '📋' },
-    { id: 'risk', label: '风控', icon: '🛡️' },
-    { id: 'settings', label: '设置', icon: '⚙️' },
+    { id: 'home', label: '首页', icon: <Home size={20} /> },
+    { id: 'selection', label: '选股', icon: <TrendingUp size={20} /> },
+    { id: 'history', label: '历史', icon: <History size={20} /> },
+    { id: 'risk', label: '风控', icon: <Shield size={20} /> },
+    { id: 'settings', label: '设置', icon: <Settings size={20} /> },
   ];
 
   return (
@@ -25,7 +26,7 @@ const Navbar: React.FC = () => {
               className="p-2" 
               onClick={() => setMenuOpen(!menuOpen)}
             >
-              <span className="text-xl">☰</span>
+              <Menu size={24} />
             </button>
           </div>
         </div>

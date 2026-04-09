@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Bell, Check, X, AlertCircle, Info } from 'lucide-react';
 
 interface Notification {
   id: number;
@@ -47,13 +48,13 @@ const Notification: React.FC = () => {
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'success':
-        return '✓';
+        return <Check size={12} />;
       case 'error':
-        return '✕';
+        return <X size={12} />;
       case 'warning':
-        return '!';
+        return <AlertCircle size={12} />;
       default:
-        return 'ℹ';
+        return <Info size={12} />;
     }
   };
 
@@ -63,7 +64,7 @@ const Notification: React.FC = () => {
         className="relative p-2"
         onClick={() => setShowNotifications(!showNotifications)}
       >
-        <span className="text-xl">🔔</span>
+        <Bell size={24} />
         {notifications.some(n => !n.read) && (
           <span className="absolute top-0 right-0 w-2 h-2 bg-danger rounded-full"></span>
         )}

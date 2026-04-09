@@ -1,6 +1,17 @@
 import React from 'react';
+import { BarChart3, TrendingUp, History, Shield } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
+  // 按钮点击处理函数
+  const handleButtonClick = (action: string) => {
+    console.log(`${action} 按钮被点击`);
+    // 这里可以添加具体的功能逻辑
+  };
+
+  const handleCopyCode = (code: string) => {
+    console.log(`复制代码: ${code}`);
+    // 这里可以添加复制到剪贴板的逻辑
+  };
   // 模拟数据
   const marketData = {
     index: '3,258.63',
@@ -73,7 +84,10 @@ const Dashboard: React.FC = () => {
             <span className="text-2xl font-bold">{selectedStocks.length}</span>
             <span className="text-sm text-gray-500">只优质标的</span>
           </div>
-          <button className="mt-3 w-full py-2 bg-primary text-white rounded-lg text-sm">
+          <button 
+            className="mt-3 w-full py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors"
+            onClick={() => handleButtonClick('查看详情')}
+          >
             查看详情
           </button>
         </div>
@@ -96,7 +110,10 @@ const Dashboard: React.FC = () => {
                     <span className="ml-2 text-success">{stock.change}</span>
                   </div>
                 </div>
-                <button className="px-3 py-1 border border-primary text-primary rounded-lg text-sm">
+                <button 
+                  className="px-3 py-1 border border-primary text-primary rounded-lg text-sm hover:bg-primary/10 transition-colors"
+                  onClick={() => handleCopyCode(stock.code)}
+                >
                   复制代码
                 </button>
               </div>
@@ -121,22 +138,42 @@ const Dashboard: React.FC = () => {
 
       {/* 快捷功能 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow-sm p-4 text-center">
-          <div className="text-2xl mb-2">📊</div>
+        <button 
+          className="bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition-shadow"
+          onClick={() => handleButtonClick('盘前分析')}
+        >
+          <div className="flex justify-center mb-2">
+            <BarChart3 size={24} className="text-primary" />
+          </div>
           <h3 className="text-sm font-medium">盘前分析</h3>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm p-4 text-center">
-          <div className="text-2xl mb-2">📈</div>
+        </button>
+        <button 
+          className="bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition-shadow"
+          onClick={() => handleButtonClick('尾盘选股')}
+        >
+          <div className="flex justify-center mb-2">
+            <TrendingUp size={24} className="text-primary" />
+          </div>
           <h3 className="text-sm font-medium">尾盘选股</h3>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm p-4 text-center">
-          <div className="text-2xl mb-2">📋</div>
+        </button>
+        <button 
+          className="bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition-shadow"
+          onClick={() => handleButtonClick('历史复盘')}
+        >
+          <div className="flex justify-center mb-2">
+            <History size={24} className="text-primary" />
+          </div>
           <h3 className="text-sm font-medium">历史复盘</h3>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm p-4 text-center">
-          <div className="text-2xl mb-2">🛡️</div>
+        </button>
+        <button 
+          className="bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition-shadow"
+          onClick={() => handleButtonClick('风控设置')}
+        >
+          <div className="flex justify-center mb-2">
+            <Shield size={24} className="text-primary" />
+          </div>
           <h3 className="text-sm font-medium">风控设置</h3>
-        </div>
+        </button>
       </div>
 
       {/* 风险提示 */}
