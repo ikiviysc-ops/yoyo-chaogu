@@ -1,27 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, History, Shield } from 'lucide-react';
+import { BarChart3, TrendingUp, History, Shield, X } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
+  const [showDetails, setShowDetails] = useState(false);
+  
   // 按钮点击处理函数
   const handleButtonClick = (action: string) => {
     console.log(`${action} 按钮被点击`);
     // 导航到相应页面
     switch (action) {
       case '盘前分析':
-        // 这里可以添加盘前分析的逻辑
+        alert('盘前分析功能开发中');
         break;
       case '尾盘选股':
-        window.location.href = '#/selection';
+        // Find the Selection button and click it programmatically
+        const selectionButton = document.querySelector('button[name="选股"]') as HTMLButtonElement;
+        if (selectionButton) {
+          selectionButton.click();
+        } else {
+          // Fallback to window.location
+          window.location.hash = '#/selection';
+        }
         break;
       case '历史复盘':
-        window.location.href = '#/history';
+        const historyButton = document.querySelector('button[name="历史"]') as HTMLButtonElement;
+        if (historyButton) {
+          historyButton.click();
+        } else {
+          window.location.hash = '#/history';
+        }
         break;
       case '风控设置':
-        window.location.href = '#/risk';
+        const riskButton = document.querySelector('button[name="风控"]') as HTMLButtonElement;
+        if (riskButton) {
+          riskButton.click();
+        } else {
+          window.location.hash = '#/risk';
+        }
         break;
       case '查看详情':
-        // 这里可以添加查看详情的逻辑
-        alert('查看详情功能开发中');
+        setShowDetails(true);
         break;
       default:
         break;
@@ -243,6 +261,78 @@ const Dashboard: React.FC = () => {
           投资有风险，入市需谨慎，本系统仅为选股参考，不构成投资建议
         </p>
       </div>
+
+      {/* 详情弹窗 */}
+      {showDetails && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-auto">
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+              <h2 className="text-lg font-bold">今日选股详情</h2>
+              <button
+                onClick={() => setShowDetails(false)}
+                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-4">
+              <div className="space-y-4">
+                {selectedStocks.map((stock, index) => (
+                  <div key={stock.id} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <div className="flex items-center">
+                          <span className="text-sm font-medium text-gray-500 mr-2">#{index + 1}</span>
+                          <h3 className="font-bold">{stock.name}</h3>
+                          <span className="ml-1 text-sm text-gray-500">{stock.code}</span>
+                        </div>
+                        <div className="flex items-baseline mt-1">
+                          <span className="text-2xl font-bold">{stock.price}</span>
+                          <span className="ml-2 text-lg text-success">{stock.change}</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleCopyCode(stock.code)}
+                        className="px-3 py-1.5 border border-primary text-primary rounded-lg text-sm hover:bg-primary/10 transition-colors"
+                      >
+                        复制代码
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                      <div className="bg-gray-50 p-2 rounded-lg">
+                        <div className="text-xs text-gray-500">量比</div>
+                        <div className="font-medium">{stock.volumeRatio}</div>
+                      </div>
+                      <div className="bg-gray-50 p-2 rounded-lg">
+                        <div className="text-xs text-gray-500">换手率</div>
+                        <div className="font-medium">{stock.turnover}%</div>
+                      </div>
+                      <div className="bg-gray-50 p-2 rounded-lg">
+                        <div className="text-xs text-gray-500">价格</div>
+                        <div className="font-medium">{stock.price}</div>
+                      </div>
+                      <div className="bg-gray-50 p-2 rounded-lg">
+                        <div className="text-xs text-gray-500">涨跌</div>
+                        <div className="font-medium text-success">{stock.change}</div>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div>
+                        <div className="text-xs text-gray-500 mb-1">选股理由</div>
+                        <p className="text-sm text-gray-700">{stock.reason}</p>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500 mb-1">风险提示</div>
+                        <p className="text-sm text-danger">{stock.risk}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
