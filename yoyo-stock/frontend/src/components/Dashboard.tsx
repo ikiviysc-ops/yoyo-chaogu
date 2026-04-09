@@ -5,12 +5,37 @@ const Dashboard: React.FC = () => {
   // 按钮点击处理函数
   const handleButtonClick = (action: string) => {
     console.log(`${action} 按钮被点击`);
-    // 这里可以添加具体的功能逻辑
+    // 导航到相应页面
+    switch (action) {
+      case '盘前分析':
+        // 这里可以添加盘前分析的逻辑
+        break;
+      case '尾盘选股':
+        window.location.href = '#/selection';
+        break;
+      case '历史复盘':
+        window.location.href = '#/history';
+        break;
+      case '风控设置':
+        window.location.href = '#/risk';
+        break;
+      case '查看详情':
+        // 这里可以添加查看详情的逻辑
+        alert('查看详情功能开发中');
+        break;
+      default:
+        break;
+    }
   };
 
   const handleCopyCode = (code: string) => {
-    console.log(`复制代码: ${code}`);
-    // 这里可以添加复制到剪贴板的逻辑
+    navigator.clipboard.writeText(code)
+      .then(() => {
+        alert('代码已复制到剪贴板');
+      })
+      .catch(err => {
+        console.error('复制失败:', err);
+      });
   };
   
   // 状态管理
