@@ -53,10 +53,10 @@ const Dashboard: React.FC = () => {
               id: stock.id,
               code: stock.stock_code,
               name: stock.stock_name,
-              price: 100 + Math.random() * 900,
+              price: stock.price || (100 + Math.random() * 900),
               change: stock.rise_rate,
-              mcap: `${(Math.random() * 500 + 10).toFixed(2)}B`,
-              volume: `${(Math.random() * 1000 + 100).toFixed(2)}M`,
+              mcap: stock.amount || `${(Math.random() * 500 + 10).toFixed(2)}亿`,
+              volume: stock.volume || `${(Math.random() * 1000 + 100).toFixed(2)}万`,
             }));
             console.log('格式化后的数据:', formattedStocks);
             setStocks(formattedStocks);
@@ -86,7 +86,7 @@ const Dashboard: React.FC = () => {
   };
 
   const formatPrice = (price: number) => {
-    return `$${price.toFixed(2)}`;
+    return `¥${price.toFixed(2)}`;
   };
 
   const formatChange = (change: number) => {
@@ -270,7 +270,7 @@ const Dashboard: React.FC = () => {
                 <div>
                   <h3 className="text-white font-bold text-sm">{stock.name}</h3>
                   <p className="text-gray-400 text-xs">
-                    ${stock.mcap} MCap · ${stock.volume} Vol
+                    {stock.mcap} · {stock.volume}
                   </p>
                 </div>
               </div>
@@ -371,11 +371,11 @@ const Dashboard: React.FC = () => {
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <div className="bg-[#2a2a2d] rounded-2xl p-3">
                   <p className="text-gray-400 text-xs mb-1">市值</p>
-                  <p className="text-white font-bold text-md">${selectedStock.mcap}</p>
+                  <p className="text-white font-bold text-md">{selectedStock.mcap}</p>
                 </div>
                 <div className="bg-[#2a2a2d] rounded-2xl p-3">
                   <p className="text-gray-400 text-xs mb-1">成交量</p>
-                  <p className="text-white font-bold text-md">${selectedStock.volume}</p>
+                  <p className="text-white font-bold text-md">{selectedStock.volume}</p>
                 </div>
               </div>
 

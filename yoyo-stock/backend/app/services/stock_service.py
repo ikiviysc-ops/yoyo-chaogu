@@ -77,6 +77,26 @@ def get_daily_selection(date: str = None):
             else:
                 risk_tip = risk_tip.rstrip("，")
             
+            # 获取真实数据
+            price = float(row['最新价'])
+            volume = float(row['成交量'])
+            amount = float(row['成交额'])
+            
+            # 格式化成交量和成交额
+            if volume >= 100000000:
+                volume_str = f"{volume/100000000:.2f}亿"
+            elif volume >= 10000:
+                volume_str = f"{volume/10000:.2f}万"
+            else:
+                volume_str = f"{volume:.2f}"
+            
+            if amount >= 100000000:
+                amount_str = f"{amount/100000000:.2f}亿"
+            elif amount >= 10000:
+                amount_str = f"{amount/10000:.2f}万"
+            else:
+                amount_str = f"{amount:.2f}"
+            
             selected_stocks.append({
                 "id": index + 1,
                 "select_date": date,
@@ -85,6 +105,9 @@ def get_daily_selection(date: str = None):
                 "rise_rate": rise_rate,
                 "volume_ratio": volume_ratio,
                 "turnover_rate": turnover_rate,
+                "price": price,
+                "volume": volume_str,
+                "amount": amount_str,
                 "select_reason": select_reason,
                 "risk_tip": risk_tip
             })

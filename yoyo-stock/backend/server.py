@@ -5,7 +5,7 @@ import os
 from datetime import datetime, timedelta
 from app.services.stock_service import get_daily_selection, get_stock_info, filter_stocks
 
-PORT = 8001
+PORT = 8002
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "yoyo_stock.db")
 
