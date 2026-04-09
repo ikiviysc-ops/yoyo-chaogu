@@ -71,13 +71,16 @@ const Dashboard: React.FC = () => {
     fetchData();
   }, []);
 
-  const generateMiniChart = (isUp: boolean) => {
+  const generateMiniChart = (isUp: boolean, height: number = 60, width: number = 95) => {
     const points = [];
-    let y = 50;
+    let y = height * 0.5;
+    const maxY = height * 0.9;
+    const minY = height * 0.1;
+    const stepX = width / 19;
     for (let i = 0; i < 20; i++) {
-      y += (Math.random() - (isUp ? 0.4 : 0.6)) * 10;
-      y = Math.max(10, Math.min(90, y));
-      points.push(`${i * 5},${y}`);
+      y += (Math.random() - (isUp ? 0.4 : 0.6)) * (height * 0.15);
+      y = Math.max(minY, Math.min(maxY, y));
+      points.push(`${i * stepX},${y}`);
     }
     return points.join(' ');
   };
@@ -172,11 +175,11 @@ const Dashboard: React.FC = () => {
                       </linearGradient>
                     </defs>
                     <path
-                      d={`M 0 60 L ${generateMiniChart(stock.change >= 0)} L 95 60 Z`}
+                      d={`M 0 60 L ${generateMiniChart(stock.change >= 0, 60)} L 95 60 Z`}
                       fill={`url(#gradient-${stock.id})`}
                     />
                     <polyline
-                      points={generateMiniChart(stock.change >= 0)}
+                      points={generateMiniChart(stock.change >= 0, 60)}
                       fill="none"
                       stroke={getStockColor(stock.change)}
                       strokeWidth="2"
@@ -196,25 +199,25 @@ const Dashboard: React.FC = () => {
             className={`px-3 py-1.5 rounded-full font-semibold text-xs transition-all ${activeTab === 'hot' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
             onClick={() => setActiveTab('hot')}
           >
-            Hot tokens
+            热门
           </button>
           <button
             className={`px-3 py-1.5 rounded-full font-semibold text-xs transition-all ${activeTab === 'gainers' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
             onClick={() => setActiveTab('gainers')}
           >
-            Top Gainers
+            涨幅榜
           </button>
           <button
             className={`px-3 py-1.5 rounded-full font-semibold text-xs transition-all ${activeTab === 'rwa' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
             onClick={() => setActiveTab('rwa')}
           >
-            RWA
+            价值股
           </button>
           <button
             className={`px-3 py-1.5 rounded-full font-semibold text-xs transition-all ${activeTab === 'meme' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
             onClick={() => setActiveTab('meme')}
           >
-            Meme
+            题材
           </button>
         </div>
 
@@ -277,8 +280,8 @@ const Dashboard: React.FC = () => {
                     {formatPrice(stock.price)}
                   </div>
                   <div className="flex items-center justify-end gap-1">
-                    <div className="h-6 w-16">
-                      <svg viewBox="0 0 95 40" className="w-full h-full">
+                    <div className="h-10 w-20">
+                      <svg viewBox="0 0 95 60" className="w-full h-full">
                         <defs>
                           <linearGradient id={`list-gradient-${stock.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
                             <stop offset="0%" stopColor={getStockColor(stock.change)} stopOpacity="0.3" />
@@ -286,11 +289,11 @@ const Dashboard: React.FC = () => {
                           </linearGradient>
                         </defs>
                         <path
-                          d={`M 0 40 L ${generateMiniChart(stock.change >= 0)} L 95 40 Z`}
+                          d={`M 0 60 L ${generateMiniChart(stock.change >= 0, 60)} L 95 60 Z`}
                           fill={`url(#list-gradient-${stock.id})`}
                         />
                         <polyline
-                          points={generateMiniChart(stock.change >= 0)}
+                          points={generateMiniChart(stock.change >= 0, 60)}
                           fill="none"
                           stroke={getStockColor(stock.change)}
                           strokeWidth="2"
@@ -351,11 +354,11 @@ const Dashboard: React.FC = () => {
                     </linearGradient>
                   </defs>
                   <path
-                    d={`M 0 150 L ${generateMiniChart(selectedStock.change >= 0)} L 300 150 Z`}
+                    d={`M 0 150 L ${generateMiniChart(selectedStock.change >= 0, 150, 300)} L 300 150 Z`}
                     fill="url(#detail-gradient)"
                   />
                   <polyline
-                    points={generateMiniChart(selectedStock.change >= 0)}
+                    points={generateMiniChart(selectedStock.change >= 0, 150, 300)}
                     fill="none"
                     stroke={getStockColor(selectedStock.change)}
                     strokeWidth="3"
