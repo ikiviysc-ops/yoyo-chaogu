@@ -1,10 +1,9 @@
-fastapi==0.104.1
+fastapi==0.95.1
 uvicorn==0.24.0
 apscheduler==3.10.4
 redis==5.0.1
 baostock==0.8.8
 tushare==1.2.86
-pydantic==2.5.0
-pydantic-settings==2.1.0
+pydantic==1.10.13
 python-dotenv==1.0.0
 aiosqlite==0.19.0
