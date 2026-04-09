@@ -25,9 +25,12 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log('开始获取数据...');
         const response = await fetch('/api/stocks/selection');
+        console.log('API响应状态:', response.status);
         if (response.ok) {
           const data = await response.json();
+          console.log('获取到的数据:', data);
           if (data.length > 0) {
             const formattedStocks: Stock[] = data.map((stock: any, index: number) => ({
               id: stock.id,
@@ -38,9 +41,40 @@ const Dashboard: React.FC = () => {
               mcap: `${(Math.random() * 500 + 10).toFixed(2)}B`,
               volume: `${(Math.random() * 1000 + 100).toFixed(2)}M`,
             }));
+            console.log('格式化后的数据:', formattedStocks);
             setStocks(formattedStocks);
             setHotStocks(formattedStocks.slice(0, 6));
+          } else {
+            console.log('数据为空，使用模拟数据');
+            // 模拟数据
+            const mockStocks: Stock[] = [
+              { id: 1, code: '600519', name: '贵州茅台', price: 1789.00, change: 3.25, mcap: '2.35T', volume: '45.23M' },
+              { id: 2, code: '601318', name: '中国平安', price: 58.50, change: -1.85, mcap: '1.08T', volume: '89.56M' },
+              { id: 3, code: '600036', name: '招商银行', price: 35.80, change: 2.15, mcap: '890.5B', volume: '123.45M' },
+              { id: 4, code: '000858', name: '五粮液', price: 168.50, change: 4.12, mcap: '652.3B', volume: '67.89M' },
+              { id: 5, code: '601899', name: '紫金矿业', price: 15.60, change: -0.75, mcap: '405.2B', volume: '156.78M' },
+              { id: 6, code: '000001', name: '平安银行', price: 12.30, change: 1.25, mcap: '350.1B', volume: '98.76M' },
+              { id: 7, code: '600276', name: '恒瑞医药', price: 48.90, change: -2.35, mcap: '312.8B', volume: '54.32M' },
+              { id: 8, code: '600585', name: '海螺水泥', price: 38.50, change: 0.85, mcap: '205.6B', volume: '43.21M' },
+            ];
+            setStocks(mockStocks);
+            setHotStocks(mockStocks.slice(0, 6));
           }
+        } else {
+          console.log('API响应失败，使用模拟数据');
+          // 模拟数据
+          const mockStocks: Stock[] = [
+            { id: 1, code: '600519', name: '贵州茅台', price: 1789.00, change: 3.25, mcap: '2.35T', volume: '45.23M' },
+            { id: 2, code: '601318', name: '中国平安', price: 58.50, change: -1.85, mcap: '1.08T', volume: '89.56M' },
+            { id: 3, code: '600036', name: '招商银行', price: 35.80, change: 2.15, mcap: '890.5B', volume: '123.45M' },
+            { id: 4, code: '000858', name: '五粮液', price: 168.50, change: 4.12, mcap: '652.3B', volume: '67.89M' },
+            { id: 5, code: '601899', name: '紫金矿业', price: 15.60, change: -0.75, mcap: '405.2B', volume: '156.78M' },
+            { id: 6, code: '000001', name: '平安银行', price: 12.30, change: 1.25, mcap: '350.1B', volume: '98.76M' },
+            { id: 7, code: '600276', name: '恒瑞医药', price: 48.90, change: -2.35, mcap: '312.8B', volume: '54.32M' },
+            { id: 8, code: '600585', name: '海螺水泥', price: 38.50, change: 0.85, mcap: '205.6B', volume: '43.21M' },
+          ];
+          setStocks(mockStocks);
+          setHotStocks(mockStocks.slice(0, 6));
         }
       } catch (error) {
         console.error('获取数据失败:', error);
@@ -134,28 +168,28 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Hot Stocks Horizontal Scroll */}
-        <div className="mb-6">
-          <h2 className="text-white text-xl font-bold mb-4">交易量最高（24小时）</h2>
-          <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4">
+        <div className="mb-4">
+          <h2 className="text-white text-lg font-bold mb-3">交易量最高（24小时）</h2>
+          <div className="flex gap-3 overflow-x-auto pb-1.5 -mx-4 px-4">
             {hotStocks.map((stock) => (
               <div
                 key={stock.id}
-                className="flex-shrink-0 w-36 bg-[#2a2a2d] rounded-3xl p-4 cursor-pointer hover:bg-[#353538] transition-colors"
+                className="flex-shrink-0 w-32 bg-[#2a2a2d] rounded-3xl p-3 cursor-pointer hover:bg-[#353538] transition-colors"
                 onClick={() => handleStockClick(stock)}
               >
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-1.5">
                   <span className="text-gray-400 font-semibold text-xs">{stock.name}</span>
-                  <div className="w-8 h-8 bg-[#3d3d40] rounded-full flex items-center justify-center">
+                  <div className="w-7 h-7 bg-[#3d3d40] rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-xs">{stock.name.charAt(0)}</span>
                   </div>
                 </div>
-                <div className="text-xl font-bold text-white mb-1">
+                <div className="text-lg font-bold text-white mb-1">
                   {formatPrice(stock.price)}
                 </div>
-                <div className="text-sm font-semibold mb-2" style={{ color: getStockColor(stock.change) }}>
+                <div className="text-xs font-semibold mb-1.5" style={{ color: getStockColor(stock.change) }}>
                   {formatChange(stock.change)}
                 </div>
-                <div className="h-16">
+                <div className="h-12">
                   <svg viewBox="0 0 95 60" className="w-full h-full">
                     <defs>
                       <linearGradient id={`gradient-${stock.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
@@ -183,27 +217,27 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        <div className="flex gap-1.5 mb-4 overflow-x-auto pb-1.5">
           <button
-            className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${activeTab === 'hot' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
+            className={`px-3 py-1.5 rounded-full font-semibold text-xs transition-all ${activeTab === 'hot' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
             onClick={() => setActiveTab('hot')}
           >
             Hot tokens
           </button>
           <button
-            className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${activeTab === 'gainers' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
+            className={`px-3 py-1.5 rounded-full font-semibold text-xs transition-all ${activeTab === 'gainers' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
             onClick={() => setActiveTab('gainers')}
           >
             Top Gainers
           </button>
           <button
-            className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${activeTab === 'rwa' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
+            className={`px-3 py-1.5 rounded-full font-semibold text-xs transition-all ${activeTab === 'rwa' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
             onClick={() => setActiveTab('rwa')}
           >
             RWA
           </button>
           <button
-            className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${activeTab === 'meme' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
+            className={`px-3 py-1.5 rounded-full font-semibold text-xs transition-all ${activeTab === 'meme' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
             onClick={() => setActiveTab('meme')}
           >
             Meme
@@ -211,65 +245,65 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Sort Controls */}
-        <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
-          <button className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2d] rounded-full">
-            <span className="text-gray-400 font-medium text-sm">网络</span>
-            <ChevronDown size={16} className="text-gray-400" />
+        <div className="flex justify-between items-center mb-3 flex-wrap gap-1.5">
+          <button className="flex items-center gap-1.5 px-3 py-1.5 bg-[#2a2a2d] rounded-full">
+            <span className="text-gray-400 font-medium text-xs">网络</span>
+            <ChevronDown size={14} className="text-gray-400" />
           </button>
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             <button
-              className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2d] rounded-full"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#2a2a2d] rounded-full"
               onClick={() => {
                 setSortBy('mcap');
                 setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
               }}
             >
-              <span className="text-gray-400 font-medium text-sm">市值</span>
+              <span className="text-gray-400 font-medium text-xs">市值</span>
               {sortBy === 'mcap' && (
-                sortOrder === 'desc' ? <ChevronDown size={16} className="text-gray-400" /> : <ChevronRight size={16} className="text-gray-400" />
+                sortOrder === 'desc' ? <ChevronDown size={14} className="text-gray-400" /> : <ChevronRight size={14} className="text-gray-400" />
               )}
             </button>
             <button
-              className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2d] rounded-full"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#2a2a2d] rounded-full"
               onClick={() => {
                 setSortBy('change');
                 setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
               }}
             >
-              <span className="text-gray-400 font-medium text-sm">24h</span>
+              <span className="text-gray-400 font-medium text-xs">24h</span>
               {sortBy === 'change' && (
-                sortOrder === 'desc' ? <ChevronDown size={16} className="text-gray-400" /> : <ChevronRight size={16} className="text-gray-400" />
+                sortOrder === 'desc' ? <ChevronDown size={14} className="text-gray-400" /> : <ChevronRight size={14} className="text-gray-400" />
               )}
             </button>
           </div>
         </div>
 
         {/* Stock List */}
-        <div className="space-y-5">
+        <div className="space-y-4">
           {sortedStocks.map((stock) => (
             <div
               key={stock.id}
-              className="flex items-center justify-between py-2 cursor-pointer hover:bg-white/5 rounded-xl transition-colors"
+              className="flex items-center justify-between py-1.5 cursor-pointer hover:bg-white/5 rounded-xl transition-colors"
               onClick={() => handleStockClick(stock)}
             >
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-white font-bold text-xl">{stock.name.charAt(0)}</span>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white font-bold text-sm">{stock.name.charAt(0)}</span>
                 </div>
                 <div>
-                  <h3 className="text-white font-bold text-lg">{stock.name}</h3>
-                  <p className="text-gray-400 text-sm">
+                  <h3 className="text-white font-bold text-sm">{stock.name}</h3>
+                  <p className="text-gray-400 text-xs">
                     ${stock.mcap} MCap · ${stock.volume} Vol
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <div className="text-right">
-                  <div className="text-white font-bold text-lg">
+                  <div className="text-white font-bold text-sm">
                     {formatPrice(stock.price)}
                   </div>
                   <div className="flex items-center justify-end gap-1">
-                    <div className="h-8 w-20">
+                    <div className="h-6 w-16">
                       <svg viewBox="0 0 95 40" className="w-full h-full">
                         <defs>
                           <linearGradient id={`list-gradient-${stock.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
@@ -291,7 +325,7 @@ const Dashboard: React.FC = () => {
                         />
                       </svg>
                     </div>
-                    <span className="font-semibold text-sm" style={{ color: getStockColor(stock.change) }}>
+                    <span className="font-semibold text-xs" style={{ color: getStockColor(stock.change) }}>
                       {formatChange(stock.change)}
                     </span>
                   </div>
