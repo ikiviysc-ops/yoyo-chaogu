@@ -52,40 +52,40 @@ const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 pt-20 pb-20 bg-background min-h-screen">
+    <div className="container mx-auto px-4 pt-16 pb-16 bg-background min-h-screen">
       {/* 市场概览 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <h3 className="text-sm text-gray-500 mb-2">大盘指数</h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+        <div className="bg-white rounded-lg shadow-sm p-3">
+          <h3 className="text-xs text-gray-500 mb-1">大盘指数</h3>
           <div className="flex items-baseline">
-            <span className="text-2xl font-bold">{marketData.index}</span>
-            <span className="ml-2 text-success">{marketData.change}</span>
+            <span className="text-xl font-bold">{marketData.index}</span>
+            <span className="ml-1 text-success">{marketData.change}</span>
           </div>
-          <div className="flex justify-between mt-2 text-sm">
+          <div className="flex justify-between mt-1 text-xs">
             <span className="text-success">上涨 {marketData.up}</span>
             <span className="text-danger">下跌 {marketData.down}</span>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <h3 className="text-sm text-gray-500 mb-2">仓位建议</h3>
+        <div className="bg-white rounded-lg shadow-sm p-3">
+          <h3 className="text-xs text-gray-500 mb-1">仓位建议</h3>
           <div className="flex items-center">
-            <span className="text-xl font-bold">{positionAdvice.level}</span>
-            <span className="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">
+            <span className="text-lg font-bold">{positionAdvice.level}</span>
+            <span className="ml-1 px-1.5 py-0.5 bg-yellow-100 text-yellow-800 rounded-full text-xs">
               {positionAdvice.risk}风险
             </span>
           </div>
-          <p className="mt-2 text-sm text-gray-600">{positionAdvice.suggestion}</p>
+          <p className="mt-1 text-xs text-gray-600">{positionAdvice.suggestion}</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <h3 className="text-sm text-gray-500 mb-2">今日选股</h3>
+        <div className="bg-white rounded-lg shadow-sm p-3">
+          <h3 className="text-xs text-gray-500 mb-1">今日选股</h3>
           <div className="flex items-center justify-between">
-            <span className="text-2xl font-bold">{selectedStocks.length}</span>
-            <span className="text-sm text-gray-500">只优质标的</span>
+            <span className="text-xl font-bold">{selectedStocks.length}</span>
+            <span className="text-xs text-gray-500">只优质标的</span>
           </div>
           <button 
-            className="mt-3 w-full py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors"
+            className="mt-2 w-full py-1.5 bg-primary text-white rounded-lg text-xs hover:bg-primary/90 transition-colors"
             onClick={() => handleButtonClick('查看详情')}
           >
             查看详情
@@ -94,30 +94,30 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* 选股结果 */}
-      <div className="mb-8">
-        <h2 className="text-lg font-bold mb-4">今日选股结果</h2>
-        <div className="space-y-4">
+      <div className="mb-6">
+        <h2 className="text-base font-bold mb-3">今日选股结果</h2>
+        <div className="space-y-3">
           {selectedStocks.map((stock) => (
-            <div key={stock.id} className="bg-white rounded-lg shadow-sm p-4">
+            <div key={stock.id} className="bg-white rounded-lg shadow-sm p-3">
               <div className="flex justify-between items-start">
                 <div>
                   <div className="flex items-center">
-                    <h3 className="font-bold">{stock.name}</h3>
-                    <span className="ml-2 text-sm text-gray-500">{stock.code}</span>
+                    <h3 className="font-bold text-sm">{stock.name}</h3>
+                    <span className="ml-1 text-xs text-gray-500">{stock.code}</span>
                   </div>
                   <div className="flex items-baseline mt-1">
-                    <span className="text-lg font-bold">{stock.price}</span>
-                    <span className="ml-2 text-success">{stock.change}</span>
+                    <span className="text-base font-bold">{stock.price}</span>
+                    <span className="ml-1 text-success">{stock.change}</span>
                   </div>
                 </div>
                 <button 
-                  className="px-3 py-1 border border-primary text-primary rounded-lg text-sm hover:bg-primary/10 transition-colors"
+                  className="px-2 py-1 border border-primary text-primary rounded-lg text-xs hover:bg-primary/10 transition-colors"
                   onClick={() => handleCopyCode(stock.code)}
                 >
                   复制代码
                 </button>
               </div>
-              <div className="grid grid-cols-2 gap-2 mt-3 text-sm">
+              <div className="grid grid-cols-2 gap-1 mt-2 text-xs">
                 <div>
                   <span className="text-gray-500">量比：</span>
                   <span>{stock.volumeRatio}</span>
@@ -127,9 +127,9 @@ const Dashboard: React.FC = () => {
                   <span>{stock.turnover}%</span>
                 </div>
               </div>
-              <div className="mt-3 text-sm">
-                <p className="text-gray-600">{stock.reason}</p>
-                <p className="mt-1 text-danger">{stock.risk}</p>
+              <div className="mt-2 text-xs">
+                <p className="text-gray-600 line-clamp-2">{stock.reason}</p>
+                <p className="mt-0.5 text-danger">{stock.risk}</p>
               </div>
             </div>
           ))}
@@ -137,48 +137,48 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* 快捷功能 */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <button 
-          className="bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition-shadow"
+          className="bg-white rounded-lg shadow-sm p-3 text-center hover:shadow-md transition-shadow"
           onClick={() => handleButtonClick('盘前分析')}
         >
-          <div className="flex justify-center mb-2">
-            <BarChart3 size={24} className="text-primary" />
+          <div className="flex justify-center mb-1">
+            <BarChart3 size={20} className="text-primary" />
           </div>
-          <h3 className="text-sm font-medium">盘前分析</h3>
+          <h3 className="text-xs font-medium">盘前分析</h3>
         </button>
         <button 
-          className="bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition-shadow"
+          className="bg-white rounded-lg shadow-sm p-3 text-center hover:shadow-md transition-shadow"
           onClick={() => handleButtonClick('尾盘选股')}
         >
-          <div className="flex justify-center mb-2">
-            <TrendingUp size={24} className="text-primary" />
+          <div className="flex justify-center mb-1">
+            <TrendingUp size={20} className="text-primary" />
           </div>
-          <h3 className="text-sm font-medium">尾盘选股</h3>
+          <h3 className="text-xs font-medium">尾盘选股</h3>
         </button>
         <button 
-          className="bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition-shadow"
+          className="bg-white rounded-lg shadow-sm p-3 text-center hover:shadow-md transition-shadow"
           onClick={() => handleButtonClick('历史复盘')}
         >
-          <div className="flex justify-center mb-2">
-            <History size={24} className="text-primary" />
+          <div className="flex justify-center mb-1">
+            <History size={20} className="text-primary" />
           </div>
-          <h3 className="text-sm font-medium">历史复盘</h3>
+          <h3 className="text-xs font-medium">历史复盘</h3>
         </button>
         <button 
-          className="bg-white rounded-lg shadow-sm p-4 text-center hover:shadow-md transition-shadow"
+          className="bg-white rounded-lg shadow-sm p-3 text-center hover:shadow-md transition-shadow"
           onClick={() => handleButtonClick('风控设置')}
         >
-          <div className="flex justify-center mb-2">
-            <Shield size={24} className="text-primary" />
+          <div className="flex justify-center mb-1">
+            <Shield size={20} className="text-primary" />
           </div>
-          <h3 className="text-sm font-medium">风控设置</h3>
+          <h3 className="text-xs font-medium">风控设置</h3>
         </button>
       </div>
 
       {/* 风险提示 */}
-      <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
-        <p className="text-sm text-yellow-800">
+      <div className="mt-6 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
+        <p className="text-xs text-yellow-800">
           投资有风险，入市需谨慎，本系统仅为选股参考，不构成投资建议
         </p>
       </div>

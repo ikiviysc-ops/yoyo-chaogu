@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import { Home, TrendingUp, History, Shield, Settings, Menu, Bell } from 'lucide-react';
 import Notification from './Notification';
 
-const Navbar: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('home');
+interface NavbarProps {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const tabs = [
