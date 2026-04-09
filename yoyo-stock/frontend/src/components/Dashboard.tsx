@@ -1,334 +1,364 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, History, Shield, X } from 'lucide-react';
+import { Search, Star, TrendingUp, TrendingDown, ChevronDown, ChevronRight, X } from 'lucide-react';
+
+interface Stock {
+  id: number;
+  code: string;
+  name: string;
+  price: number;
+  change: number;
+  mcap: string;
+  volume: string;
+}
 
 const Dashboard: React.FC = () => {
   const [showDetails, setShowDetails] = useState(false);
-  
-  // 按钮点击处理函数
-  const handleButtonClick = (action: string) => {
-    console.log(`${action} 按钮被点击`);
-    // 导航到相应页面
-    switch (action) {
-      case '盘前分析':
-        alert('盘前分析功能开发中');
-        break;
-      case '尾盘选股':
-        // Find the Selection button and click it programmatically
-        const selectionButton = document.querySelector('button[name="选股"]') as HTMLButtonElement;
-        if (selectionButton) {
-          selectionButton.click();
-        } else {
-          // Fallback to window.location
-          window.location.hash = '#/selection';
-        }
-        break;
-      case '历史复盘':
-        const historyButton = document.querySelector('button[name="历史"]') as HTMLButtonElement;
-        if (historyButton) {
-          historyButton.click();
-        } else {
-          window.location.hash = '#/history';
-        }
-        break;
-      case '风控设置':
-        const riskButton = document.querySelector('button[name="风控"]') as HTMLButtonElement;
-        if (riskButton) {
-          riskButton.click();
-        } else {
-          window.location.hash = '#/risk';
-        }
-        break;
-      case '查看详情':
-        setShowDetails(true);
-        break;
-      default:
-        break;
-    }
-  };
+  const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
+  const [activeTab, setActiveTab] = useState('hot');
+  const [sortBy, setSortBy] = useState('mcap');
+  const [sortOrder, setSortOrder] = useState('desc');
 
-  const handleCopyCode = (code: string) => {
-    navigator.clipboard.writeText(code)
-      .then(() => {
-        alert('代码已复制到剪贴板');
-      })
-      .catch(err => {
-        console.error('复制失败:', err);
-      });
-  };
-  
-  // 状态管理
-  const [marketData, setMarketData] = useState({
-    index: '3,258.63',
-    change: '+0.25%',
-    up: 1856,
-    down: 2143,
-  });
-
-  const [positionAdvice, setPositionAdvice] = useState({
-    level: '保守',
-    risk: '中等',
-    suggestion: '控制仓位，关注业绩优良的蓝筹股',
-  });
-
-  const [selectedStocks, setSelectedStocks] = useState([
-    {
-      id: 1,
-      code: '600519',
-      name: '贵州茅台',
-      price: '1,789.00',
-      change: '+3.25%',
-      volumeRatio: 1.5,
-      turnover: 6.8,
-      reason: '符合杨永兴尾盘买入策略：当日涨幅3.25%，20日内有涨停，量比1.5，换手率6.8%，股价在20日均线上方',
-      risk: '风险提示：暂无明显风险',
-    },
-    {
-      id: 2,
-      code: '000858',
-      name: '五粮液',
-      price: '168.50',
-      change: '+4.12%',
-      volumeRatio: 1.8,
-      turnover: 5.2,
-      reason: '符合杨永兴尾盘买入策略：当日涨幅4.12%，20日内有涨停，量比1.8，换手率5.2%，股价在20日均线上方',
-      risk: '风险提示：量比异常',
-    },
-  ]);
+  const [stocks, setStocks] = useState<Stock[]>([]);
+  const [hotStocks, setHotStocks] = useState<Stock[]>([]);
 
   // 从后端API获取数据
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 获取选股结果
-        const selectionResponse = await fetch('/api/stocks/selection');
-        if (selectionResponse.ok) {
-          const selectionData = await selectionResponse.json();
-          if (selectionData.length > 0) {
-            // 转换数据格式以匹配前端需要的结构
-            const formattedStocks = selectionData.map((stock: any) => ({
+        const response = await fetch('/api/stocks/selection');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.length > 0) {
+            const formattedStocks: Stock[] = data.map((stock: any, index: number) => ({
               id: stock.id,
               code: stock.stock_code,
               name: stock.stock_name,
-              price: '1,000.00', // 模拟价格
-              change: `+${stock.rise_rate}%`,
-              volumeRatio: stock.volume_ratio,
-              turnover: stock.turnover_rate,
-              reason: stock.select_reason,
-              risk: stock.risk_tip,
+              price: 100 + Math.random() * 900,
+              change: stock.rise_rate,
+              mcap: `${(Math.random() * 500 + 10).toFixed(2)}B`,
+              volume: `${(Math.random() * 1000 + 100).toFixed(2)}M`,
             }));
-            setSelectedStocks(formattedStocks);
+            setStocks(formattedStocks);
+            setHotStocks(formattedStocks.slice(0, 6));
           }
         }
       } catch (error) {
         console.error('获取数据失败:', error);
-        console.error('Error type:', typeof error);
-        console.error('Error message:', error.message);
-        console.error('Error stack:', error.stack);
+        // 模拟数据
+        const mockStocks: Stock[] = [
+          { id: 1, code: '600519', name: '贵州茅台', price: 1789.00, change: 3.25, mcap: '2.35T', volume: '45.23M' },
+          { id: 2, code: '601318', name: '中国平安', price: 58.50, change: -1.85, mcap: '1.08T', volume: '89.56M' },
+          { id: 3, code: '600036', name: '招商银行', price: 35.80, change: 2.15, mcap: '890.5B', volume: '123.45M' },
+          { id: 4, code: '000858', name: '五粮液', price: 168.50, change: 4.12, mcap: '652.3B', volume: '67.89M' },
+          { id: 5, code: '601899', name: '紫金矿业', price: 15.60, change: -0.75, mcap: '405.2B', volume: '156.78M' },
+          { id: 6, code: '000001', name: '平安银行', price: 12.30, change: 1.25, mcap: '350.1B', volume: '98.76M' },
+          { id: 7, code: '600276', name: '恒瑞医药', price: 48.90, change: -2.35, mcap: '312.8B', volume: '54.32M' },
+          { id: 8, code: '600585', name: '海螺水泥', price: 38.50, change: 0.85, mcap: '205.6B', volume: '43.21M' },
+        ];
+        setStocks(mockStocks);
+        setHotStocks(mockStocks.slice(0, 6));
       }
     };
 
     fetchData();
   }, []);
 
+  const generateMiniChart = (isUp: boolean) => {
+    const points = [];
+    let y = 50;
+    for (let i = 0; i < 20; i++) {
+      y += (Math.random() - (isUp ? 0.4 : 0.6)) * 10;
+      y = Math.max(10, Math.min(90, y));
+      points.push(`${i * 5},${y}`);
+    }
+    return points.join(' ');
+  };
+
+  const formatPrice = (price: number) => {
+    return `$${price.toFixed(2)}`;
+  };
+
+  const formatChange = (change: number) => {
+    const sign = change >= 0 ? '+' : '';
+    return `${sign}${change.toFixed(2)}%`;
+  };
+
+  const getStockColor = (change: number) => {
+    return change >= 0 ? '#10b981' : '#ef4444';
+  };
+
+  const handleStockClick = (stock: Stock) => {
+    setSelectedStock(stock);
+    setShowDetails(true);
+  };
+
+  const sortedStocks = [...stocks].sort((a, b) => {
+    let comparison = 0;
+    switch (sortBy) {
+      case 'mcap':
+        comparison = parseFloat(a.mcap) - parseFloat(b.mcap);
+        break;
+      case 'change':
+        comparison = a.change - b.change;
+        break;
+      case 'price':
+        comparison = a.price - b.price;
+        break;
+      default:
+        comparison = 0;
+    }
+    return sortOrder === 'desc' ? -comparison : comparison;
+  });
+
   return (
-    <div className="container mx-auto px-4 pt-16 pb-16 bg-background min-h-screen">
-      {/* 市场概览 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-        <div className="bg-white rounded-lg shadow-sm p-3">
-          <h3 className="text-xs text-gray-500 mb-1">大盘指数</h3>
-          <div className="flex items-baseline">
-            <span className="text-xl font-bold">{marketData.index}</span>
-            <span className="ml-1 text-success">{marketData.change}</span>
-          </div>
-          <div className="flex justify-between mt-1 text-xs">
-            <span className="text-success">上涨 {marketData.up}</span>
-            <span className="text-danger">下跌 {marketData.down}</span>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm p-3">
-          <h3 className="text-xs text-gray-500 mb-1">仓位建议</h3>
-          <div className="flex items-center">
-            <span className="text-lg font-bold">{positionAdvice.level}</span>
-            <span className="ml-1 px-1.5 py-0.5 bg-yellow-100 text-yellow-800 rounded-full text-xs">
-              {positionAdvice.risk}风险
-            </span>
-          </div>
-          <p className="mt-1 text-xs text-gray-600">{positionAdvice.suggestion}</p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm p-3">
-          <h3 className="text-xs text-gray-500 mb-1">今日选股</h3>
-          <div className="flex items-center justify-between">
-            <span className="text-xl font-bold">{selectedStocks.length}</span>
-            <span className="text-xs text-gray-500">只优质标的</span>
-          </div>
-          <button 
-            className="mt-2 w-full py-1.5 bg-primary text-white rounded-lg text-xs hover:bg-primary/90 transition-colors"
-            onClick={() => handleButtonClick('查看详情')}
-          >
-            查看详情
+    <div className="bg-[#17171a] min-h-screen pt-8 pb-24">
+      {/* Header */}
+      <div className="px-4 mb-6">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold text-white">热门</h1>
+          <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
+            <Search size={24} className="text-white" />
           </button>
         </div>
-      </div>
 
-      {/* 选股结果 */}
-      <div className="mb-6">
-        <h2 className="text-base font-bold mb-3">今日选股结果</h2>
-        <div className="space-y-3">
-          {selectedStocks.map((stock) => (
-            <div key={stock.id} className="bg-white rounded-lg shadow-sm p-3">
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="flex items-center">
-                    <h3 className="font-bold text-sm">{stock.name}</h3>
-                    <span className="ml-1 text-xs text-gray-500">{stock.code}</span>
+        {/* Hot Stocks Horizontal Scroll */}
+        <div className="mb-6">
+          <h2 className="text-white text-xl font-bold mb-4">交易量最高（24小时）</h2>
+          <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4">
+            {hotStocks.map((stock) => (
+              <div
+                key={stock.id}
+                className="flex-shrink-0 w-44 bg-[#2a2a2d] rounded-3xl p-5 cursor-pointer hover:bg-[#353538] transition-colors"
+                onClick={() => handleStockClick(stock)}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-gray-400 font-semibold text-sm">{stock.name}</span>
+                  <div className="w-9 h-9 bg-[#3d3d40] rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold text-xs">{stock.name.charAt(0)}</span>
                   </div>
-                  <div className="flex items-baseline mt-1">
-                    <span className="text-base font-bold">{stock.price}</span>
-                    <span className="ml-1 text-success">{stock.change}</span>
+                </div>
+                <div className="text-2xl font-bold text-white mb-2">
+                  {formatPrice(stock.price)}
+                </div>
+                <div className="text-lg font-semibold mb-3" style={{ color: getStockColor(stock.change) }}>
+                  {formatChange(stock.change)}
+                </div>
+                <div className="h-16">
+                  <svg viewBox="0 0 95 60" className="w-full h-full">
+                    <defs>
+                      <linearGradient id={`gradient-${stock.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor={getStockColor(stock.change)} stopOpacity="0.3" />
+                        <stop offset="100%" stopColor={getStockColor(stock.change)} stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <path
+                      d={`M 0 60 L ${generateMiniChart(stock.change >= 0)} L 95 60 Z`}
+                      fill={`url(#gradient-${stock.id})`}
+                    />
+                    <polyline
+                      points={generateMiniChart(stock.change >= 0)}
+                      fill="none"
+                      stroke={getStockColor(stock.change)}
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-3 mb-6 overflow-x-auto pb-2">
+          <button
+            className={`px-8 py-3 rounded-full font-semibold text-lg transition-all ${activeTab === 'hot' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
+            onClick={() => setActiveTab('hot')}
+          >
+            Hot tokens
+          </button>
+          <button
+            className={`px-8 py-3 rounded-full font-semibold text-lg transition-all ${activeTab === 'gainers' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
+            onClick={() => setActiveTab('gainers')}
+          >
+            Top Gainers
+          </button>
+          <button
+            className={`px-8 py-3 rounded-full font-semibold text-lg transition-all ${activeTab === 'rwa' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
+            onClick={() => setActiveTab('rwa')}
+          >
+            RWA
+          </button>
+          <button
+            className={`px-8 py-3 rounded-full font-semibold text-lg transition-all ${activeTab === 'meme' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
+            onClick={() => setActiveTab('meme')}
+          >
+            Meme
+          </button>
+        </div>
+
+        {/* Sort Controls */}
+        <div className="flex justify-between items-center mb-4">
+          <button className="flex items-center gap-2 px-5 py-2 bg-[#2a2a2d] rounded-full">
+            <span className="text-gray-400 font-medium text-lg">网络</span>
+            <ChevronDown size={20} className="text-gray-400" />
+          </button>
+          <div className="flex gap-3">
+            <button
+              className="flex items-center gap-2 px-5 py-2 bg-[#2a2a2d] rounded-full"
+              onClick={() => {
+                setSortBy('mcap');
+                setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
+              }}
+            >
+              <span className="text-gray-400 font-medium text-lg">市值</span>
+              {sortBy === 'mcap' && (
+                sortOrder === 'desc' ? <ChevronDown size={20} className="text-gray-400" /> : <ChevronRight size={20} className="text-gray-400" />
+              )}
+            </button>
+            <button
+              className="flex items-center gap-2 px-5 py-2 bg-[#2a2a2d] rounded-full"
+              onClick={() => {
+                setSortBy('change');
+                setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
+              }}
+            >
+              <span className="text-gray-400 font-medium text-lg">24h</span>
+              {sortBy === 'change' && (
+                sortOrder === 'desc' ? <ChevronDown size={20} className="text-gray-400" /> : <ChevronRight size={20} className="text-gray-400" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Stock List */}
+        <div className="space-y-5">
+          {sortedStocks.map((stock) => (
+            <div
+              key={stock.id}
+              className="flex items-center justify-between py-2 cursor-pointer hover:bg-white/5 rounded-xl transition-colors"
+              onClick={() => handleStockClick(stock)}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white font-bold text-xl">{stock.name.charAt(0)}</span>
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-2xl">{stock.name}</h3>
+                  <p className="text-gray-400 text-lg">
+                    ${stock.mcap} MCap · ${stock.volume} Vol
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <div className="text-white font-bold text-2xl">
+                    {formatPrice(stock.price)}
+                  </div>
+                  <div className="flex items-center justify-end gap-1">
+                    <div className="h-10 w-24">
+                      <svg viewBox="0 0 95 40" className="w-full h-full">
+                        <defs>
+                          <linearGradient id={`list-gradient-${stock.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor={getStockColor(stock.change)} stopOpacity="0.3" />
+                            <stop offset="100%" stopColor={getStockColor(stock.change)} stopOpacity="0" />
+                          </linearGradient>
+                        </defs>
+                        <path
+                          d={`M 0 40 L ${generateMiniChart(stock.change >= 0)} L 95 40 Z`}
+                          fill={`url(#list-gradient-${stock.id})`}
+                        />
+                        <polyline
+                          points={generateMiniChart(stock.change >= 0)}
+                          fill="none"
+                          stroke={getStockColor(stock.change)}
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <span className="font-semibold text-xl" style={{ color: getStockColor(stock.change) }}>
+                      {formatChange(stock.change)}
+                    </span>
                   </div>
                 </div>
-                <button 
-                  className="px-2 py-1 border border-primary text-primary rounded-lg text-xs hover:bg-primary/10 transition-colors"
-                  onClick={() => handleCopyCode(stock.code)}
-                >
-                  复制代码
-                </button>
-              </div>
-              <div className="grid grid-cols-2 gap-1 mt-2 text-xs">
-                <div>
-                  <span className="text-gray-500">量比：</span>
-                  <span>{stock.volumeRatio}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">换手率：</span>
-                  <span>{stock.turnover}%</span>
-                </div>
-              </div>
-              <div className="mt-2 text-xs">
-                <p className="text-gray-600 line-clamp-2">{stock.reason}</p>
-                <p className="mt-0.5 text-danger">{stock.risk}</p>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* 快捷功能 */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <button 
-          className="bg-white rounded-lg shadow-sm p-3 text-center hover:shadow-md transition-shadow"
-          onClick={() => handleButtonClick('盘前分析')}
-        >
-          <div className="flex justify-center mb-1">
-            <BarChart3 size={20} className="text-primary" />
-          </div>
-          <h3 className="text-xs font-medium">盘前分析</h3>
-        </button>
-        <button 
-          className="bg-white rounded-lg shadow-sm p-3 text-center hover:shadow-md transition-shadow"
-          onClick={() => handleButtonClick('尾盘选股')}
-        >
-          <div className="flex justify-center mb-1">
-            <TrendingUp size={20} className="text-primary" />
-          </div>
-          <h3 className="text-xs font-medium">尾盘选股</h3>
-        </button>
-        <button 
-          className="bg-white rounded-lg shadow-sm p-3 text-center hover:shadow-md transition-shadow"
-          onClick={() => handleButtonClick('历史复盘')}
-        >
-          <div className="flex justify-center mb-1">
-            <History size={20} className="text-primary" />
-          </div>
-          <h3 className="text-xs font-medium">历史复盘</h3>
-        </button>
-        <button 
-          className="bg-white rounded-lg shadow-sm p-3 text-center hover:shadow-md transition-shadow"
-          onClick={() => handleButtonClick('风控设置')}
-        >
-          <div className="flex justify-center mb-1">
-            <Shield size={20} className="text-primary" />
-          </div>
-          <h3 className="text-xs font-medium">风控设置</h3>
-        </button>
-      </div>
-
-      {/* 风险提示 */}
-      <div className="mt-6 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
-        <p className="text-xs text-yellow-800">
-          投资有风险，入市需谨慎，本系统仅为选股参考，不构成投资建议
-        </p>
-      </div>
-
-      {/* 详情弹窗 */}
-      {showDetails && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-auto">
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-              <h2 className="text-lg font-bold">今日选股详情</h2>
-              <button
-                onClick={() => setShowDetails(false)}
-                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <div className="p-4">
-              <div className="space-y-4">
-                {selectedStocks.map((stock, index) => (
-                  <div key={stock.id} className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <div className="flex items-center">
-                          <span className="text-sm font-medium text-gray-500 mr-2">#{index + 1}</span>
-                          <h3 className="font-bold">{stock.name}</h3>
-                          <span className="ml-1 text-sm text-gray-500">{stock.code}</span>
-                        </div>
-                        <div className="flex items-baseline mt-1">
-                          <span className="text-2xl font-bold">{stock.price}</span>
-                          <span className="ml-2 text-lg text-success">{stock.change}</span>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handleCopyCode(stock.code)}
-                        className="px-3 py-1.5 border border-primary text-primary rounded-lg text-sm hover:bg-primary/10 transition-colors"
-                      >
-                        复制代码
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-                      <div className="bg-gray-50 p-2 rounded-lg">
-                        <div className="text-xs text-gray-500">量比</div>
-                        <div className="font-medium">{stock.volumeRatio}</div>
-                      </div>
-                      <div className="bg-gray-50 p-2 rounded-lg">
-                        <div className="text-xs text-gray-500">换手率</div>
-                        <div className="font-medium">{stock.turnover}%</div>
-                      </div>
-                      <div className="bg-gray-50 p-2 rounded-lg">
-                        <div className="text-xs text-gray-500">价格</div>
-                        <div className="font-medium">{stock.price}</div>
-                      </div>
-                      <div className="bg-gray-50 p-2 rounded-lg">
-                        <div className="text-xs text-gray-500">涨跌</div>
-                        <div className="font-medium text-success">{stock.change}</div>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div>
-                        <div className="text-xs text-gray-500 mb-1">选股理由</div>
-                        <p className="text-sm text-gray-700">{stock.reason}</p>
-                      </div>
-                      <div>
-                        <div className="text-xs text-gray-500 mb-1">风险提示</div>
-                        <p className="text-sm text-danger">{stock.risk}</p>
-                      </div>
-                    </div>
+      {/* Detail Modal */}
+      {showDetails && selectedStock && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-[#17171a] rounded-3xl max-w-md w-full max-h-[80vh] overflow-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold text-lg">{selectedStock.name.charAt(0)}</span>
                   </div>
-                ))}
+                  <div>
+                    <h2 className="text-white font-bold text-xl">{selectedStock.name}</h2>
+                    <p className="text-gray-400">{selectedStock.code}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowDetails(false)}
+                  className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                >
+                  <X size={24} className="text-white" />
+                </button>
               </div>
+
+              <div className="mb-6">
+                <div className="text-4xl font-bold text-white mb-2">
+                  {formatPrice(selectedStock.price)}
+                </div>
+                <div className="text-2xl font-semibold" style={{ color: getStockColor(selectedStock.change) }}>
+                  {formatChange(selectedStock.change)}
+                </div>
+              </div>
+
+              <div className="h-40 mb-6">
+                <svg viewBox="0 0 300 150" className="w-full h-full">
+                  <defs>
+                    <linearGradient id="detail-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor={getStockColor(selectedStock.change)} stopOpacity="0.3" />
+                      <stop offset="100%" stopColor={getStockColor(selectedStock.change)} stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    d={`M 0 150 L ${generateMiniChart(selectedStock.change >= 0)} L 300 150 Z`}
+                    fill="url(#detail-gradient)"
+                  />
+                  <polyline
+                    points={generateMiniChart(selectedStock.change >= 0)}
+                    fill="none"
+                    stroke={getStockColor(selectedStock.change)}
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-[#2a2a2d] rounded-2xl p-4">
+                  <p className="text-gray-400 text-sm mb-1">市值</p>
+                  <p className="text-white font-bold text-lg">${selectedStock.mcap}</p>
+                </div>
+                <div className="bg-[#2a2a2d] rounded-2xl p-4">
+                  <p className="text-gray-400 text-sm mb-1">成交量</p>
+                  <p className="text-white font-bold text-lg">${selectedStock.volume}</p>
+                </div>
+              </div>
+
+              <button className="w-full py-4 bg-[#3d3d40] text-white font-bold text-lg rounded-2xl hover:bg-[#4d4d50] transition-colors">
+                查看更多详情
+              </button>
             </div>
           </div>
         </div>
