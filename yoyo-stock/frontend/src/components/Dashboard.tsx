@@ -128,19 +128,19 @@ const Dashboard: React.FC = () => {
             {hotStocks.map((stock) => (
               <div
                 key={stock.id}
-                className="flex-shrink-0 w-44 bg-[#2a2a2d] rounded-3xl p-5 cursor-pointer hover:bg-[#353538] transition-colors"
+                className="flex-shrink-0 w-36 bg-[#2a2a2d] rounded-3xl p-4 cursor-pointer hover:bg-[#353538] transition-colors"
                 onClick={() => handleStockClick(stock)}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-gray-400 font-semibold text-sm">{stock.name}</span>
-                  <div className="w-9 h-9 bg-[#3d3d40] rounded-full flex items-center justify-center">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-gray-400 font-semibold text-xs">{stock.name}</span>
+                  <div className="w-8 h-8 bg-[#3d3d40] rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-xs">{stock.name.charAt(0)}</span>
                   </div>
                 </div>
-                <div className="text-2xl font-bold text-white mb-2">
+                <div className="text-xl font-bold text-white mb-1">
                   {formatPrice(stock.price)}
                 </div>
-                <div className="text-lg font-semibold mb-3" style={{ color: getStockColor(stock.change) }}>
+                <div className="text-sm font-semibold mb-2" style={{ color: getStockColor(stock.change) }}>
                   {formatChange(stock.change)}
                 </div>
                 <div className="h-16">
@@ -171,27 +171,27 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-3 mb-6 overflow-x-auto pb-2">
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
           <button
-            className={`px-8 py-3 rounded-full font-semibold text-lg transition-all ${activeTab === 'hot' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
+            className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${activeTab === 'hot' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
             onClick={() => setActiveTab('hot')}
           >
             Hot tokens
           </button>
           <button
-            className={`px-8 py-3 rounded-full font-semibold text-lg transition-all ${activeTab === 'gainers' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
+            className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${activeTab === 'gainers' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
             onClick={() => setActiveTab('gainers')}
           >
             Top Gainers
           </button>
           <button
-            className={`px-8 py-3 rounded-full font-semibold text-lg transition-all ${activeTab === 'rwa' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
+            className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${activeTab === 'rwa' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
             onClick={() => setActiveTab('rwa')}
           >
             RWA
           </button>
           <button
-            className={`px-8 py-3 rounded-full font-semibold text-lg transition-all ${activeTab === 'meme' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
+            className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${activeTab === 'meme' ? 'bg-[#3d3d40] text-white' : 'bg-[#2a2a2d] text-gray-400'}`}
             onClick={() => setActiveTab('meme')}
           >
             Meme
@@ -199,34 +199,34 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Sort Controls */}
-        <div className="flex justify-between items-center mb-4">
-          <button className="flex items-center gap-2 px-5 py-2 bg-[#2a2a2d] rounded-full">
-            <span className="text-gray-400 font-medium text-lg">网络</span>
-            <ChevronDown size={20} className="text-gray-400" />
+        <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+          <button className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2d] rounded-full">
+            <span className="text-gray-400 font-medium text-sm">网络</span>
+            <ChevronDown size={16} className="text-gray-400" />
           </button>
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <button
-              className="flex items-center gap-2 px-5 py-2 bg-[#2a2a2d] rounded-full"
+              className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2d] rounded-full"
               onClick={() => {
                 setSortBy('mcap');
                 setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
               }}
             >
-              <span className="text-gray-400 font-medium text-lg">市值</span>
+              <span className="text-gray-400 font-medium text-sm">市值</span>
               {sortBy === 'mcap' && (
-                sortOrder === 'desc' ? <ChevronDown size={20} className="text-gray-400" /> : <ChevronRight size={20} className="text-gray-400" />
+                sortOrder === 'desc' ? <ChevronDown size={16} className="text-gray-400" /> : <ChevronRight size={16} className="text-gray-400" />
               )}
             </button>
             <button
-              className="flex items-center gap-2 px-5 py-2 bg-[#2a2a2d] rounded-full"
+              className="flex items-center gap-2 px-4 py-2 bg-[#2a2a2d] rounded-full"
               onClick={() => {
                 setSortBy('change');
                 setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
               }}
             >
-              <span className="text-gray-400 font-medium text-lg">24h</span>
+              <span className="text-gray-400 font-medium text-sm">24h</span>
               {sortBy === 'change' && (
-                sortOrder === 'desc' ? <ChevronDown size={20} className="text-gray-400" /> : <ChevronRight size={20} className="text-gray-400" />
+                sortOrder === 'desc' ? <ChevronDown size={16} className="text-gray-400" /> : <ChevronRight size={16} className="text-gray-400" />
               )}
             </button>
           </div>
@@ -245,19 +245,19 @@ const Dashboard: React.FC = () => {
                   <span className="text-white font-bold text-xl">{stock.name.charAt(0)}</span>
                 </div>
                 <div>
-                  <h3 className="text-white font-bold text-2xl">{stock.name}</h3>
-                  <p className="text-gray-400 text-lg">
+                  <h3 className="text-white font-bold text-lg">{stock.name}</h3>
+                  <p className="text-gray-400 text-sm">
                     ${stock.mcap} MCap · ${stock.volume} Vol
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <div className="text-right">
-                  <div className="text-white font-bold text-2xl">
+                  <div className="text-white font-bold text-lg">
                     {formatPrice(stock.price)}
                   </div>
                   <div className="flex items-center justify-end gap-1">
-                    <div className="h-10 w-24">
+                    <div className="h-8 w-20">
                       <svg viewBox="0 0 95 40" className="w-full h-full">
                         <defs>
                           <linearGradient id={`list-gradient-${stock.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
@@ -279,7 +279,7 @@ const Dashboard: React.FC = () => {
                         />
                       </svg>
                     </div>
-                    <span className="font-semibold text-xl" style={{ color: getStockColor(stock.change) }}>
+                    <span className="font-semibold text-sm" style={{ color: getStockColor(stock.change) }}>
                       {formatChange(stock.change)}
                     </span>
                   </div>
@@ -293,36 +293,36 @@ const Dashboard: React.FC = () => {
       {/* Detail Modal */}
       {showDetails && selectedStock && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#17171a] rounded-3xl max-w-md w-full max-h-[80vh] overflow-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">{selectedStock.name.charAt(0)}</span>
+          <div className="bg-[#17171a] rounded-3xl max-w-sm w-full max-h-[80vh] overflow-auto">
+            <div className="p-4">
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold text-md">{selectedStock.name.charAt(0)}</span>
                   </div>
                   <div>
-                    <h2 className="text-white font-bold text-xl">{selectedStock.name}</h2>
-                    <p className="text-gray-400">{selectedStock.code}</p>
+                    <h2 className="text-white font-bold text-lg">{selectedStock.name}</h2>
+                    <p className="text-gray-400 text-sm">{selectedStock.code}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowDetails(false)}
-                  className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                  className="p-1 hover:bg-white/10 rounded-full transition-colors"
                 >
-                  <X size={24} className="text-white" />
+                  <X size={20} className="text-white" />
                 </button>
               </div>
 
-              <div className="mb-6">
-                <div className="text-4xl font-bold text-white mb-2">
+              <div className="mb-4">
+                <div className="text-2xl font-bold text-white mb-1">
                   {formatPrice(selectedStock.price)}
                 </div>
-                <div className="text-2xl font-semibold" style={{ color: getStockColor(selectedStock.change) }}>
+                <div className="text-lg font-semibold" style={{ color: getStockColor(selectedStock.change) }}>
                   {formatChange(selectedStock.change)}
                 </div>
               </div>
 
-              <div className="h-40 mb-6">
+              <div className="h-32 mb-4">
                 <svg viewBox="0 0 300 150" className="w-full h-full">
                   <defs>
                     <linearGradient id="detail-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -345,18 +345,18 @@ const Dashboard: React.FC = () => {
                 </svg>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-[#2a2a2d] rounded-2xl p-4">
-                  <p className="text-gray-400 text-sm mb-1">市值</p>
-                  <p className="text-white font-bold text-lg">${selectedStock.mcap}</p>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="bg-[#2a2a2d] rounded-2xl p-3">
+                  <p className="text-gray-400 text-xs mb-1">市值</p>
+                  <p className="text-white font-bold text-md">${selectedStock.mcap}</p>
                 </div>
-                <div className="bg-[#2a2a2d] rounded-2xl p-4">
-                  <p className="text-gray-400 text-sm mb-1">成交量</p>
-                  <p className="text-white font-bold text-lg">${selectedStock.volume}</p>
+                <div className="bg-[#2a2a2d] rounded-2xl p-3">
+                  <p className="text-gray-400 text-xs mb-1">成交量</p>
+                  <p className="text-white font-bold text-md">${selectedStock.volume}</p>
                 </div>
               </div>
 
-              <button className="w-full py-4 bg-[#3d3d40] text-white font-bold text-lg rounded-2xl hover:bg-[#4d4d50] transition-colors">
+              <button className="w-full py-3 bg-[#3d3d40] text-white font-bold text-md rounded-2xl hover:bg-[#4d4d50] transition-colors">
                 查看更多详情
               </button>
             </div>
