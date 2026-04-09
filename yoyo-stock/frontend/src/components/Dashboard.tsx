@@ -57,7 +57,7 @@ const Dashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         // 获取选股结果
-        const selectionResponse = await fetch('http://localhost:8001/api/stocks/selection');
+        const selectionResponse = await fetch('/api/stocks/selection');
         if (selectionResponse.ok) {
           const selectionData = await selectionResponse.json();
           if (selectionData.length > 0) {
@@ -78,6 +78,9 @@ const Dashboard: React.FC = () => {
         }
       } catch (error) {
         console.error('获取数据失败:', error);
+        console.error('Error type:', typeof error);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
       }
     };
 
