@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, History, Shield } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
@@ -12,21 +12,22 @@ const Dashboard: React.FC = () => {
     console.log(`复制代码: ${code}`);
     // 这里可以添加复制到剪贴板的逻辑
   };
-  // 模拟数据
-  const marketData = {
+  
+  // 状态管理
+  const [marketData, setMarketData] = useState({
     index: '3,258.63',
     change: '+0.25%',
     up: 1856,
     down: 2143,
-  };
+  });
 
-  const positionAdvice = {
+  const [positionAdvice, setPositionAdvice] = useState({
     level: '保守',
     risk: '中等',
     suggestion: '控制仓位，关注业绩优良的蓝筹股',
-  };
+  });
 
-  const selectedStocks = [
+  const [selectedStocks, setSelectedStocks] = useState([
     {
       id: 1,
       code: '600519',
@@ -49,7 +50,39 @@ const Dashboard: React.FC = () => {
       reason: '符合杨永兴尾盘买入策略：当日涨幅4.12%，20日内有涨停，量比1.8，换手率5.2%，股价在20日均线上方',
       risk: '风险提示：量比异常',
     },
-  ];
+  ]);
+
+  // 从后端API获取数据
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // 获取选股结果
+        const selectionResponse = await fetch('http://localhost:8001/api/stocks/selection');
+        if (selectionResponse.ok) {
+          const selectionData = await selectionResponse.json();
+          if (selectionData.length > 0) {
+            // 转换数据格式以匹配前端需要的结构
+            const formattedStocks = selectionData.map((stock: any) => ({
+              id: stock.id,
+              code: stock.stock_code,
+              name: stock.stock_name,
+              price: '1,000.00', // 模拟价格
+              change: `+${stock.rise_rate}%`,
+              volumeRatio: stock.volume_ratio,
+              turnover: stock.turnover_rate,
+              reason: stock.select_reason,
+              risk: stock.risk_tip,
+            }));
+            setSelectedStocks(formattedStocks);
+          }
+        }
+      } catch (error) {
+        console.error('获取数据失败:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="container mx-auto px-4 pt-16 pb-16 bg-background min-h-screen">
