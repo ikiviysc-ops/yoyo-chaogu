@@ -2,8 +2,8 @@ import http.server
 import socketserver
 import json
 import os
-import sqlite3
 from datetime import datetime, timedelta
+from app.services.stock_service import get_daily_selection, get_stock_info, filter_stocks
 
 PORT = 8001
 
@@ -17,6 +17,14 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         else:
             # 处理静态文件请求
             super().do_GET()
+    
+    def do_POST(self):
+        # 处理API请求
+        if self.path.startswith("/api/"):
+            self.handle_api_request()
+        else:
+            # 处理静态文件请求
+            super().do_POST()
     
     def handle_api_request(self):
         # 解析API路径
@@ -37,6 +45,9 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 elif path_parts[3] == "selection":
                     # 获取选股结果
                     self.get_daily_selection()
+                elif path_parts[3] == "filter" and self.command == "POST":
+                    # 执行选股
+                    self.post_filter_stocks()
                 else:
                     self.send_error(404, "Not Found")
             else:
@@ -46,61 +57,29 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     
     def get_stock_info(self, stock_code):
         """获取股票信息"""
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        
-        cursor.execute('''
-        SELECT id, stock_code, stock_name, market, float_capital, is_st, is_delist 
-        FROM stock_info WHERE stock_code = ?
-        ''', (stock_code,))
-        
-        stock = cursor.fetchone()
-        conn.close()
+        stock = get_stock_info(stock_code)
         
         if stock:
-            response = {
-                "id": stock[0],
-                "stock_code": stock[1],
-                "stock_name": stock[2],
-                "market": stock[3],
-                "float_capital": stock[4],
-                "is_st": stock[5],
-                "is_delist": stock[6]
-            }
-            self.send_json_response(200, response)
+            self.send_json_response(200, stock)
         else:
             self.send_json_response(404, {"detail": "股票不存在"})
     
     def get_daily_selection(self):
         """获取选股结果"""
-        date = datetime.now().strftime("%Y-%m-%d")
+        selections = get_daily_selection()
+        self.send_json_response(200, selections)
+    
+    def post_filter_stocks(self):
+        """执行选股"""
+        # 读取请求体
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length)
         
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
+        # 执行选股
+        selected_stocks = filter_stocks()
         
-        cursor.execute('''
-        SELECT id, select_date, stock_code, stock_name, rise_rate, volume_ratio, turnover_rate, select_reason, risk_tip 
-        FROM daily_selection WHERE select_date = ?
-        ''', (date,))
-        
-        selections = cursor.fetchall()
-        conn.close()
-        
-        result = []
-        for selection in selections:
-            result.append({
-                "id": selection[0],
-                "select_date": selection[1],
-                "stock_code": selection[2],
-                "stock_name": selection[3],
-                "rise_rate": selection[4],
-                "volume_ratio": selection[5],
-                "turnover_rate": selection[6],
-                "select_reason": selection[7],
-                "risk_tip": selection[8]
-            })
-        
-        self.send_json_response(200, result)
+        # 返回选股结果
+        self.send_json_response(200, selected_stocks)
     
     def send_json_response(self, status_code, data):
         """发送JSON响应"""
