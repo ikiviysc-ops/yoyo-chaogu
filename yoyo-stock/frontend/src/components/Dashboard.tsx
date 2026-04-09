@@ -21,11 +21,28 @@ const Dashboard: React.FC = () => {
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [hotStocks, setHotStocks] = useState<Stock[]>([]);
 
+  // 模拟数据 - 先显示这个确保页面有内容
+  const mockStocks: Stock[] = [
+    { id: 1, code: '600519', name: '贵州茅台', price: 1789.00, change: 3.25, mcap: '2.35T', volume: '45.23M' },
+    { id: 2, code: '601318', name: '中国平安', price: 58.50, change: -1.85, mcap: '1.08T', volume: '89.56M' },
+    { id: 3, code: '600036', name: '招商银行', price: 35.80, change: 2.15, mcap: '890.5B', volume: '123.45M' },
+    { id: 4, code: '000858', name: '五粮液', price: 168.50, change: 4.12, mcap: '652.3B', volume: '67.89M' },
+    { id: 5, code: '601899', name: '紫金矿业', price: 15.60, change: -0.75, mcap: '405.2B', volume: '156.78M' },
+    { id: 6, code: '000001', name: '平安银行', price: 12.30, change: 1.25, mcap: '350.1B', volume: '98.76M' },
+    { id: 7, code: '600276', name: '恒瑞医药', price: 48.90, change: -2.35, mcap: '312.8B', volume: '54.32M' },
+    { id: 8, code: '600585', name: '海螺水泥', price: 38.50, change: 0.85, mcap: '205.6B', volume: '43.21M' },
+  ];
+
   // 从后端API获取数据
   useEffect(() => {
+    console.log('Dashboard组件已加载');
+    setStocks(mockStocks);
+    setHotStocks(mockStocks.slice(0, 6));
+    console.log('已设置模拟数据');
+    
     const fetchData = async () => {
       try {
-        console.log('开始获取数据...');
+        console.log('开始从API获取数据...');
         const response = await fetch('/api/stocks/selection');
         console.log('API响应状态:', response.status);
         if (response.ok) {
@@ -44,53 +61,10 @@ const Dashboard: React.FC = () => {
             console.log('格式化后的数据:', formattedStocks);
             setStocks(formattedStocks);
             setHotStocks(formattedStocks.slice(0, 6));
-          } else {
-            console.log('数据为空，使用模拟数据');
-            // 模拟数据
-            const mockStocks: Stock[] = [
-              { id: 1, code: '600519', name: '贵州茅台', price: 1789.00, change: 3.25, mcap: '2.35T', volume: '45.23M' },
-              { id: 2, code: '601318', name: '中国平安', price: 58.50, change: -1.85, mcap: '1.08T', volume: '89.56M' },
-              { id: 3, code: '600036', name: '招商银行', price: 35.80, change: 2.15, mcap: '890.5B', volume: '123.45M' },
-              { id: 4, code: '000858', name: '五粮液', price: 168.50, change: 4.12, mcap: '652.3B', volume: '67.89M' },
-              { id: 5, code: '601899', name: '紫金矿业', price: 15.60, change: -0.75, mcap: '405.2B', volume: '156.78M' },
-              { id: 6, code: '000001', name: '平安银行', price: 12.30, change: 1.25, mcap: '350.1B', volume: '98.76M' },
-              { id: 7, code: '600276', name: '恒瑞医药', price: 48.90, change: -2.35, mcap: '312.8B', volume: '54.32M' },
-              { id: 8, code: '600585', name: '海螺水泥', price: 38.50, change: 0.85, mcap: '205.6B', volume: '43.21M' },
-            ];
-            setStocks(mockStocks);
-            setHotStocks(mockStocks.slice(0, 6));
           }
-        } else {
-          console.log('API响应失败，使用模拟数据');
-          // 模拟数据
-          const mockStocks: Stock[] = [
-            { id: 1, code: '600519', name: '贵州茅台', price: 1789.00, change: 3.25, mcap: '2.35T', volume: '45.23M' },
-            { id: 2, code: '601318', name: '中国平安', price: 58.50, change: -1.85, mcap: '1.08T', volume: '89.56M' },
-            { id: 3, code: '600036', name: '招商银行', price: 35.80, change: 2.15, mcap: '890.5B', volume: '123.45M' },
-            { id: 4, code: '000858', name: '五粮液', price: 168.50, change: 4.12, mcap: '652.3B', volume: '67.89M' },
-            { id: 5, code: '601899', name: '紫金矿业', price: 15.60, change: -0.75, mcap: '405.2B', volume: '156.78M' },
-            { id: 6, code: '000001', name: '平安银行', price: 12.30, change: 1.25, mcap: '350.1B', volume: '98.76M' },
-            { id: 7, code: '600276', name: '恒瑞医药', price: 48.90, change: -2.35, mcap: '312.8B', volume: '54.32M' },
-            { id: 8, code: '600585', name: '海螺水泥', price: 38.50, change: 0.85, mcap: '205.6B', volume: '43.21M' },
-          ];
-          setStocks(mockStocks);
-          setHotStocks(mockStocks.slice(0, 6));
         }
       } catch (error) {
-        console.error('获取数据失败:', error);
-        // 模拟数据
-        const mockStocks: Stock[] = [
-          { id: 1, code: '600519', name: '贵州茅台', price: 1789.00, change: 3.25, mcap: '2.35T', volume: '45.23M' },
-          { id: 2, code: '601318', name: '中国平安', price: 58.50, change: -1.85, mcap: '1.08T', volume: '89.56M' },
-          { id: 3, code: '600036', name: '招商银行', price: 35.80, change: 2.15, mcap: '890.5B', volume: '123.45M' },
-          { id: 4, code: '000858', name: '五粮液', price: 168.50, change: 4.12, mcap: '652.3B', volume: '67.89M' },
-          { id: 5, code: '601899', name: '紫金矿业', price: 15.60, change: -0.75, mcap: '405.2B', volume: '156.78M' },
-          { id: 6, code: '000001', name: '平安银行', price: 12.30, change: 1.25, mcap: '350.1B', volume: '98.76M' },
-          { id: 7, code: '600276', name: '恒瑞医药', price: 48.90, change: -2.35, mcap: '312.8B', volume: '54.32M' },
-          { id: 8, code: '600585', name: '海螺水泥', price: 38.50, change: 0.85, mcap: '205.6B', volume: '43.21M' },
-        ];
-        setStocks(mockStocks);
-        setHotStocks(mockStocks.slice(0, 6));
+        console.error('获取API数据失败:', error);
       }
     };
 
